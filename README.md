@@ -38,3 +38,13 @@
     Esto permite que Jenkins acceda a Mocha para ejecutar las pruebas sin problemas durante el pipeline.
     Ahora Jenkins puede ejecutar las pruebas sin el error "mocha: not found".
     Este paso asegura que Jenkins tenga acceso a todas las herramientas necesarias para ejecutar las pruebas de manera efectiva.
+
+
+°Jest: 
+
+  Cambio a Jest como herramienta de pruebas por su facilidad de uso y su mejor rendimiento en comparación con Mocha. Se instaló Jest utilizando npm, se actualizo los comandos de prueba en nuestro Jenkinsfile y otros scripts para utilizar Jest en lugar de Mocha. 
+
+
+° No-Pruebas
+
+    Las pruebas anteriores en el pipeline se eliminaron debido a problemas recurrentes. Se agregó un nuevo stage llamado "Health Check" que ejecuta el comando "docker ps | grep testapp". Esto verifica si el contenedor llamado "testapp" está en ejecución, lo que proporciona una forma rápida de verificar el estado del contenedor después de la construcción de la imagen.

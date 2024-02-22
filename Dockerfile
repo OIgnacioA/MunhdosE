@@ -2,8 +2,8 @@ FROM node:11.1.0-alpine
 
 WORKDIR /app
 
-# Instalar Mocha globalmente
-RUN npm install -g mocha
+# # Instalar Jest globalmente
+# RUN npm install -g jest
 
 # Agregar package.json y package-lock.json para instalar dependencias
 ADD package.json package-lock.json /app/
@@ -15,8 +15,5 @@ EXPOSE 3000
 # Agregar el código de la aplicación
 ADD . /app
 
-# Ejecutar las pruebas con mocha
-CMD ["npm", "test"]
-
-
-
+# # Ejecutar las pruebas con Jest
+# CMD ["npm", "test"]
