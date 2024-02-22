@@ -17,3 +17,6 @@ ADD . /app
 
 # Ejecutar las pruebas con mocha
 CMD ["npm", "test"]
+
+
+

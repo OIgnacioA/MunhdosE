@@ -16,9 +16,10 @@ pipeline {
     }
   
     stage('Run tests') {
-     steps {
-     bat "docker run --rm testapp npm test"
-    }
+      steps {
+      sh 'npm test'
+     }
+}
    }
     
     // Comentar todas las demás etapas del pipeline
