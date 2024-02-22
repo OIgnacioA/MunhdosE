@@ -31,3 +31,10 @@
 ° Dependences:
 
  Se corrigió el problema actualizando la versión de mocha en package.json a ^5.2.0 para que coincida con la versión utilizada en el Dockerfile y evitar incompatibilidades.
+
+
+° Mocha 
+    Instalé globalmente la herramienta Mocha en la máquina local utilizando npm.
+    Esto permite que Jenkins acceda a Mocha para ejecutar las pruebas sin problemas durante el pipeline.
+    Ahora Jenkins puede ejecutar las pruebas sin el error "mocha: not found".
+    Este paso asegura que Jenkins tenga acceso a todas las herramientas necesarias para ejecutar las pruebas de manera efectiva.
