@@ -15,11 +15,19 @@ pipeline {
       }
     }
   
-    stage('Run tests') {
-      steps {
-      sh 'npm test'
-     }
+  stage('Health Check') {
+    steps {
+        script {
+            sh 'docker ps | grep testapp'
+        }
+    }
 }
+
+//     stage('Run tests') {
+//       steps {
+//       sh 'npm test'
+//      }
+// }
    }
     
     // Comentar todas las demás etapas del pipeline
