@@ -26,3 +26,8 @@
 
 
     Hemos actualizado el Dockerfile para incluir la instalación de las dependencias de prueba, como mocha, y hemos modificado el comando CMD para ejecutar las pruebas automáticamente al iniciar el contenedor. Esto soluciona el error "mocha: not found" al intentar ejecutar las pruebas, ya que ahora mocha está disponible dentro del contenedor.
+
+
+° Dependences:
+
+ Se corrigió el problema actualizando la versión de mocha en package.json a ^5.2.0 para que coincida con la versión utilizada en el Dockerfile y evitar incompatibilidades.
