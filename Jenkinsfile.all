@@ -5,15 +5,19 @@ pipeline {
     timeout(time: 2, unit: 'MINUTES')
   }
 
-  stages {
-
-    stage('Building image') {
-      steps{
-        bat '''
-        docker build -t testapp .
-        '''  
+  stage('Building image') { //Este código verificará si el nodo de Jenkins es de tipo Unix o no, y ejecutará el comando docker build usando sh o bat según corresponda.
+    steps {
+      script {
+        if (isUnix()) {
+          sh 'docker build -t testapp .'
+        } else {
+          bat 'docker build -t testapp .'
+        }
       }
     }
+    }
+
+  
   
   stage('Health Check') {
     steps {
