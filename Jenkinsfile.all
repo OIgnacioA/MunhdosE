@@ -14,8 +14,8 @@ pipeline {
           bat 'docker build -t testapp .'
         }
       }
-    }
-    }
+  }
+    
 
   
   
@@ -25,7 +25,7 @@ pipeline {
             sh 'docker ps | grep testapp'
         }
     }
-}
+  }
 
 //     stage('Run tests') {
 //       steps {
