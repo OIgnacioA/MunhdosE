@@ -8,7 +8,7 @@ const sum = require('./sum');
 
 // Nueva ruta para la ruta raíz "/"
 router.get('/', (ctx, next) => {
-  ctx.body = 'Welcome to the application!----Ejemplo de url a usar: http://localhost:3000/add/3/5';
+  ctx.body = 'Bine venido a la APP!----Ejemplo de url a usar: http://localhost:3000/add/3/5';
 });
 
 
