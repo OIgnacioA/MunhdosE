@@ -22,12 +22,15 @@ pipeline {
   
   
   stage('Health Check') {
-   script {
-            if (isUnix()) {
-                sh 'docker ps | grep testapp'
-            } else {
-                bat 'docker ps | findstr testapp'
-            }
+    steps {
+      
+      if (isUnix()) {
+          sh 'docker ps | grep testapp'
+      } else {
+          bat 'docker ps | findstr testapp'
+      }
+  
+    }
   }
 
       //     stage('Run tests') {
