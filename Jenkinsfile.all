@@ -1,64 +1,40 @@
 pipeline {
+
   agent any
 
   options {
     timeout(time: 2, unit: 'MINUTES')
   }
-  
-  stages {
 
-  stage('Building image') { //Este código verificará si el nodo de Jenkins es de tipo Unix o no, y ejecutará el comando docker build usando sh o bat según corresponda.
-    steps {
-      script {
-        if (isUnix()) {
-          sh 'docker build -t testapp .'
-        } else {
-          bat 'docker build -t testapp .'
+  stages {
+    stage('Building image') { 
+      steps {
+        script {
+          if (isUnix()) {
+            sh 'docker build -t testapp .'
+          } else {
+            bat 'docker build -t testapp .'
+          }
         }
       }
     }
-    
-  }
-  
-  
-  stage('Health Check') {
-    steps {
-      
-      if (isUnix()) {
-          sh 'docker ps | grep testapp'
-      } else {
-          bat 'docker ps | findstr testapp'
-      }
-  
-    }
-  }
 
-      //     stage('Run tests') {
-      //       steps {
-      //       sh 'npm test'
-      //      }
-      // }
-  }
-    
-    // Comentar todas las demás etapas del pipeline
-    /*
-    stage('Deploy Image') {
-      steps{
-        bat '''
-        docker tag testapp 127.0.0.1:5000/mguazzardo/testapp
-        docker push 127.0.0.1:5000/mguazzardo/testapp   
-        '''
-      }
-    }
-    
-    stage('Pass To K8s'){
+    stage('Health Check') {
       steps {
-        bat '''
-        echo "Wait"
-        timeout 10
-        '''
+        script {
+          if (isUnix()) {
+            sh 'docker ps | grep testapp'
+          } else {
+            bat 'docker ps | findstr testapp'
+          }
+        }
       }
     }
-    */
-  }
 
+    // stage('Run tests') {
+    //     steps {
+    //         sh 'npm test'
+    //     }
+    // }
+  }
+}
