@@ -30,6 +30,19 @@ pipeline {
                 }
             }
         }
+        stage('Health Check') {
+            steps {
+                script {
+                    if (isUnix()) {
+                        def result = sh(script: 'docker ps | grep testapp', returnStdout: true)
+                        echo "Resultado de la verificación: ${result}"
+                    } else {
+                        def result = bat(script: 'docker ps | findstr testapp', returnStdout: true)
+                        echo "Resultado de la verificación: ${result}"
+                    }
+                }
+            }
+        }
         stage('Push image to Docker Hub') {
             environment {
                 DOCKERHUB_USERNAME = 'sehent@hotmail.com'
@@ -42,14 +55,6 @@ pipeline {
                             docker.image('testapp').push("${env.DOCKERHUB_USERNAME}/testapp")
                         }
                     }
-                }
-            }
-        }
-        stage('Health Check') {
-            steps {
-                script {
-                    def result = bat(script: 'docker ps | findstr testapp', returnStdout: true)
-                    echo "Resultado de la verificación: ${result}"
                 }
             }
         }
