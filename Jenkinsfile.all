@@ -1,43 +1,55 @@
 pipeline {
-  agent any
-  options {
-    timeout(time: 2, unit: 'MINUTES')
-  }
-  stages {
-    stage('Building image') { 
-      steps {
-        script {
-          if (isUnix()) {
-            sh 'docker build -t testapp .'
-          } else {
-            bat 'docker build -t testapp .'
+    agent any
+    options {
+      timeout(time: 2, unit: 'MINUTES')
+    }
+    stages {
+      stage('Building image') { 
+        steps {
+          script {
+            if (isUnix()) {
+              sh 'docker build -t testapp .'
+            } else {
+              bat 'docker build -t testapp .'
+            }
           }
         }
       }
-    }
-    stage('Run container') {
-      steps {
-        script {
-          if (isUnix()) {
-            sh 'docker run -d -p 8082:8080 --name testapp_container testapp'
-          } else {
-            bat 'docker run -d -p 8082:8080 --name testapp_container testapp'
+      stage('Remove existing container') {
+        steps {
+          script {
+            try {
+              sh 'docker stop testapp_container'
+              sh 'docker rm testapp_container'
+            } catch (Exception e) {
+              echo "No existing container with the name testapp_container found."
+            }
           }
         }
       }
-    }
-    stage('Health Check') {
-      steps {
-        script {
-          if (isUnix()) {
-            def result = sh(script: 'docker ps | grep testapp', returnStdout: true)
-            echo "Resultado de la verificación: ${result}"
-          } else {
-            def result = bat(script: 'docker ps | findstr testapp', returnStdout: true)
-            echo "Resultado de la verificación: ${result}"
+      stage('Run container') {
+        steps {
+          script {
+            if (isUnix()) {
+              sh 'docker run -d -p 8082:8080 --name testapp_container testapp'
+            } else {
+              bat 'docker run -d -p 8082:8080 --name testapp_container testapp'
+            }
           }
         }
       }
-    }
+      stage('Health Check') {
+        steps {
+          script {
+            if (isUnix()) {
+              def result = sh(script: 'docker ps | grep testapp', returnStdout: true)
+              echo "Resultado de la verificación: ${result}"
+            } else {
+              def result = bat(script: 'docker ps | findstr testapp', returnStdout: true)
+              echo "Resultado de la verificación: ${result}"
+            }
+          }
+        }
+      }
   }
 }
