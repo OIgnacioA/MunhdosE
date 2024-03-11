@@ -4,13 +4,21 @@ pipeline {
         timeout(time: 2, unit: 'MINUTES')
     }
     stages {
-        stage('Building image') { 
+        stage('Building image') {
             steps {
                 script {
-                    if (isUnix()) {
-                        sh 'docker build -t testapp .'
-                    } else {
-                        bat 'docker build -t testapp .'
+                    docker.build('testapp')
+                }
+            }
+        }
+        stage('Remove existing container') {
+            steps {
+                script {
+                    try {
+                        docker.stop('testapp_container')
+                        docker.removeContainer('testapp_container')
+                    } catch (Exception e) {
+                        echo "No existing container with the name testapp_container found."
                     }
                 }
             }
@@ -18,12 +26,7 @@ pipeline {
         stage('Run container') {
             steps {
                 script {
-                    // Stop and remove any existing container with the same name
-                    sh 'docker stop testapp_container || true'
-                    sh 'docker rm testapp_container || true'
-                    
-                    // Run the container
-                    sh 'docker run -d -p 8082:8080 --name testapp_container testapp'
+                    docker.image('testapp').run('-d -p 8082:8080 --name testapp_container')
                 }
             }
         }
@@ -35,9 +38,9 @@ pipeline {
             steps {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_PASSWORD')]) {
-                        sh 'docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD'
-                        sh 'docker tag testapp $DOCKERHUB_USERNAME/testapp'
-                        sh 'docker push $DOCKERHUB_USERNAME/testapp'
+                        docker.withRegistry('https://index.docker.io/v1/', 'dockerhub') {
+                            docker.image('testapp').push("${env.DOCKERHUB_USERNAME}/testapp")
+                        }
                     }
                 }
             }
@@ -45,13 +48,8 @@ pipeline {
         stage('Health Check') {
             steps {
                 script {
-                    if (isUnix()) {
-                        def result = sh(script: 'docker ps | grep testapp', returnStdout: true)
-                        echo "Resultado de la verificación: ${result}"
-                    } else {
-                        def result = bat(script: 'docker ps | findstr testapp', returnStdout: true)
-                        echo "Resultado de la verificación: ${result}"
-                    }
+                    def result = bat(script: 'docker ps | findstr testapp', returnStdout: true)
+                    echo "Resultado de la verificación: ${result}"
                 }
             }
         }
