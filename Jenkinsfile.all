@@ -1,55 +1,59 @@
-pipeline {//Funciona. 1
+pipeline {
     agent any
     options {
-      timeout(time: 2, unit: 'MINUTES')
+        timeout(time: 2, unit: 'MINUTES')
     }
     stages {
-      stage('Building image') { 
-        steps {
-          script {
-            if (isUnix()) {
-              sh 'docker build -t testapp .'
-            } else {
-              bat 'docker build -t testapp .'
+        stage('Building image') { 
+            steps {
+                script {
+                    if (isUnix()) {
+                        sh 'docker build -t testapp .'
+                    } else {
+                        bat 'docker build -t testapp .'
+                    }
+                }
             }
-          }
         }
-      }
-      stage('Remove existing container') {
-        steps {
-          script {
-            try {
-              sh 'docker stop testapp_container'
-              sh 'docker rm testapp_container'
-            } catch (Exception e) {
-              echo "No existing container with the name testapp_container found."
+        stage('Run container') {
+            steps {
+                script {
+                    // Stop and remove any existing container with the same name
+                    sh 'docker stop testapp_container || true'
+                    sh 'docker rm testapp_container || true'
+                    
+                    // Run the container
+                    sh 'docker run -d -p 8082:8080 --name testapp_container testapp'
+                }
             }
-          }
         }
-      }
-      stage('Run container') {
-        steps {
-          script {
-            if (isUnix()) {
-              sh 'docker run -d -p 8082:8080 --name testapp_container testapp'
-            } else {
-              bat 'docker run -d -p 8082:8080 --name testapp_container testapp'
+        stage('Push image to Docker Hub') {
+            environment {
+                DOCKERHUB_USERNAME = 'sehent@hotmail.com'
+                DOCKERHUB_PASSWORD = 'Ludobica666'
             }
-          }
-        }
-      }
-      stage('Health Check') {
-        steps {
-          script {
-            if (isUnix()) {
-              def result = sh(script: 'docker ps | grep testapp', returnStdout: true)
-              echo "Resultado de la verificación: ${result}"
-            } else {
-              def result = bat(script: 'docker ps | findstr testapp', returnStdout: true)
-              echo "Resultado de la verificación: ${result}"
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_PASSWORD')]) {
+                        sh 'docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD'
+                        sh 'docker tag testapp $DOCKERHUB_USERNAME/testapp'
+                        sh 'docker push $DOCKERHUB_USERNAME/testapp'
+                    }
+                }
             }
-          }
         }
-      }
-  }
+        stage('Health Check') {
+            steps {
+                script {
+                    if (isUnix()) {
+                        def result = sh(script: 'docker ps | grep testapp', returnStdout: true)
+                        echo "Resultado de la verificación: ${result}"
+                    } else {
+                        def result = bat(script: 'docker ps | findstr testapp', returnStdout: true)
+                        echo "Resultado de la verificación: ${result}"
+                    }
+                }
+            }
+        }
+    }
 }
