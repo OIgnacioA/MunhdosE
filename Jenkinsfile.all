@@ -1,11 +1,8 @@
 pipeline {
-
   agent any
-
   options {
     timeout(time: 2, unit: 'MINUTES')
   }
-
   stages {
     stage('Building image') { 
       steps {
@@ -18,19 +15,19 @@ pipeline {
         }
       }
     }
-
     stage('Health Check') {
       steps {
         script {
           if (isUnix()) {
-            sh 'docker ps | grep testapp'
+            def result = sh(script: 'docker ps | grep testapp', returnStdout: true)
+            echo "Resultado de la verificación: ${result}"
           } else {
-            bat 'docker ps | findstr testapp'
+            def result = bat(script: 'docker ps | findstr testapp', returnStdout: true)
+            echo "Resultado de la verificación: ${result}"
           }
         }
       }
     }
-
     // stage('Run tests') {
     //     steps {
     //         sh 'npm test'
