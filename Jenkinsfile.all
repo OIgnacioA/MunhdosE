@@ -11,18 +11,21 @@ pipeline {
                 }
             }
         }
+        
         stage('Remove existing container') {
-            steps {
-                script {
-                    try {
-                        docker.stop('testapp_container')
-                        docker.removeContainer('testapp_container')
-                    } catch (Exception e) {
-                        echo "No existing container with the name testapp_container found."
-                    }
-                }
-            }
-        }
+          steps {
+              script {
+                  // Intenta detener y eliminar el contenedor existente
+                  try {
+                      sh 'docker stop testapp_container || true'
+                      sh 'docker rm testapp_container || true'
+                  } catch (Exception e) {
+                      echo "No existing container with the name testapp_container found."
+                  }
+              }
+          }
+       }
+
         stage('Run container') {
             steps {
                 script {
