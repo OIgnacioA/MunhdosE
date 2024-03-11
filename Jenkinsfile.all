@@ -15,6 +15,17 @@ pipeline {
         }
       }
     }
+    stage('Run container') {
+      steps {
+        script {
+          if (isUnix()) {
+            sh 'docker run -d -p 8080:8080 --name testapp_container testapp'
+          } else {
+            bat 'docker run -d -p 8080:8080 --name testapp_container testapp'
+          }
+        }
+      }
+    }
     stage('Health Check') {
       steps {
         script {
@@ -28,10 +39,5 @@ pipeline {
         }
       }
     }
-    // stage('Run tests') {
-    //     steps {
-    //         sh 'npm test'
-    //     }
-    // }
   }
 }
