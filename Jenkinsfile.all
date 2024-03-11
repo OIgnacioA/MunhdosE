@@ -19,9 +19,9 @@ pipeline {
       steps {
         script {
           if (isUnix()) {
-            sh 'docker run -d -p 8080:8080 --name testapp_container testapp'
+            sh 'docker run -d -p 8082:8080 --name testapp_container testapp'
           } else {
-            bat 'docker run -d -p 8080:8080 --name testapp_container testapp'
+            bat 'docker run -d -p 8082:8080 --name testapp_container testapp'
           }
         }
       }
