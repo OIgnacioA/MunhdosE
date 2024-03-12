@@ -50,17 +50,16 @@ pipeline {
                 }
             }
         }
-   stage('Push image to Docker Hub') {
-    steps {
-        script {
-            docker.withRegistry('https://index.docker.io/v1/', 'dockerhub') {
-                docker.image('testapp').push("${env.DOCKERHUB_USERNAME}/testapp")
-            }
-        }
-    }
-}
 
-}
+      stage('Push image to Docker Hub') {
+        steps {
+            script {
+                docker.withRegistry('https://index.docker.io/v1/', 'dockerhub') {
+                    docker.image('testapp').push("${env.DOCKERHUB_USERNAME}/testapp")
+                }
+            }
+        }   
+    }
 
     }
 }
