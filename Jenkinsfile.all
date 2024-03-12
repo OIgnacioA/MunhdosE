@@ -58,14 +58,15 @@ pipeline {
             }
         }
 
-       stage('Tag image') {
-            steps {
-                script {
-                    def dockerhubUsername = env.DOCKERHUB_USERNAME
-                    docker.tag('testapp', "${dockerhubUsername}/testapp:latest")
-                }
+        stage('Tag image') {
+         steps {
+          script {
+             def dockerhubUsername = env.DOCKERHUB_USERNAME
+             bat "docker tag testapp ${dockerhubUsername}/testapp:latest"
             }
+          }
         }
+
 
         stage('Push image to Docker Hub') {
             steps {
