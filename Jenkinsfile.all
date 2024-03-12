@@ -3,6 +3,12 @@ pipeline {
     options {
         timeout(time: 2, unit: 'MINUTES')
     }
+
+    environment {
+        DOCKERHUB_TOKEN = 'dckr_pat_WPMPYvvaDaiufO9ZJEdtM9z3eQQ' 
+    }
+
+
     stages {
         stage('Building image') {
             steps {
@@ -58,13 +64,12 @@ pipeline {
                     echo "----------> dockerhubUsername: ${dockerhubUsername}"
 
                     docker.withRegistry('https://index.docker.io/v1/', 'dockerhub') {
-                        docker.image('testapp').push("${dockerhubUsername}")
+                        docker.image('testapp').push("${dockerhubUsername}", "${DOCKERHUB_TOKEN}")
                                           
                     }
                 }
             }
         }
-
 
     }
 }
