@@ -49,7 +49,7 @@ pipeline {
         stage('Push image to Docker Hub') {
             environment {
                 DOCKERHUB_USERNAME = 'sehent@hotmail.com'
-                DOCKERHUB_PASSWORD = 'Ludobica666'
+                DOCKERHUB_PASSWORD = 'Ludobica555'
             }
             steps {
                 script {
