@@ -55,8 +55,11 @@ pipeline {
             steps {
                 script {
                     def dockerhubUsername = env.DOCKERHUB_USERNAME
+                    echo "----------> dockerhubUsername: ${dockerhubUsername}"
+
                     docker.withRegistry('https://index.docker.io/v1/', 'dockerhub') {
-                        docker.image('testapp').push("${dockerhubUsername}/testapp:latest")
+                        docker.image('testapp').push("${dockerhubUsername}")
+                                          
                     }
                 }
             }
