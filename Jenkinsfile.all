@@ -2,26 +2,15 @@ pipeline {
     agent any
     options {
         timeout(time: 10, unit: 'MINUTES')
+        
     }
 
     environment {
         DOCKERHUB_TOKEN = 'dckr_pat_WPMPYvvaDaiufO9ZJEdtM9z3eQQ' 
     }
 
-    stages {
-        stage('Preparation') {
-            steps {
-                script {
-                    // Verifica si Docker está instalado
-                    def dockerVersion = sh(returnStdout: true, script: 'docker --version').trim()
-                    if (dockerVersion.isEmpty()) {
-                        // Instala el cliente de Docker dentro del contenedor de Jenkins
-                        sh 'apk add docker-cli' // o 'apt-get install docker-ce-cli' dependiendo de la distribución
-                    }
-                }
-            }
-        }
 
+    stages {
         stage('Building image') {
             steps {
                 script {
@@ -29,10 +18,14 @@ pipeline {
                 }
             }
         }
-
+        
         stage('Remove existing container') {
             steps {
                 script {
+                    // Lista todos los contenedores para verificar si el contenedor existe
+                    bat 'docker ps -a'
+                    
+                    // Intenta detener y eliminar el contenedor existente
                     try {
                         bat 'docker stop testapp_container'
                         bat 'docker rm testapp_container'
@@ -43,6 +36,7 @@ pipeline {
             }
         }
 
+
         stage('Run container') {
             steps {
                 script {
@@ -50,7 +44,6 @@ pipeline {
                 }
             }
         }
-
         stage('Health Check') {
             steps {
                 script {
@@ -66,13 +59,14 @@ pipeline {
         }
 
         stage('Tag image') {
-            steps {
-                script {
-                    def dockerhubUsername = env.DOCKERHUB_USERNAME
-                    bat "docker tag testapp ${dockerhubUsername}/testapp:latest"
-                }
+         steps {
+          script {
+             def dockerhubUsername = env.DOCKERHUB_USERNAME
+             bat "docker tag testapp ${dockerhubUsername}/testapp:latest"
             }
+          }
         }
+
 
         stage('Push image to Docker Hub') {
             steps {
@@ -84,5 +78,6 @@ pipeline {
                 }
             }
         }
+
     }
 }
